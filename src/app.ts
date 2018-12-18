@@ -1,11 +1,16 @@
 //import express from "express";
-const express = require("express");
+import express from "express";
 import path from "path";
 const app = express();
+import http from "http";
+import socket from "socket.io";
+
+const io = socket(http);
 
 app.set("port", process.env.PORT || 3000);
-app.use(
-    express.static(path.join(__dirname, "public"), { maxAge: 31557600000 })
-);
+
+io.on("connection", (socket: any) => {
+  console.log("someone joined!!");
+});
 
 export default app;
