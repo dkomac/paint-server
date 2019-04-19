@@ -10,6 +10,7 @@ const server = http_1.default.createServer(app_1.default);
 const io = socket_io_1.default(server);
 const FROM_SERVER = 'FROM_SERVER';
 const MOUSEDOWN_FALSE = 'MOUSEDOWN_FALSE';
+const NEWLINE_MARGIN = 10;
 const MEMORY_DATA = [];
 io.on('connection', (socket) => {
     socket.isDrawing = false;
@@ -22,15 +23,19 @@ io.on('connection', (socket) => {
                 break;
             case 'POSITION_DATA':
                 newLine.push(action.payload);
-                io.emit(FROM_SERVER, { type: 'message', payload: MEMORY_DATA });
+                io.emit(FROM_SERVER, { type: 'message', payload: action.payload });
                 break;
             default:
                 console.log('i dont know :thinkingface:');
         }
-        if (!socket.isDrawing && newLine.length > 1) {
-            MEMORY_DATA.push(newLine);
-            newLine = [];
-        }
+        // if(!socket.isDrawing && newLine.length > 1) {
+        //   if(socket.previousLine) {
+        // if(action.payload.x > socket.previousLine.x + NEWLINE_MARGIN || action.payload.x > socket.previousLine.x - NEWLINE_MARGIN || action.payload.y > socket.previousLine.y + NEWLINE_MARGIN || action.payload.y > socket.previousLine.y - NEWLINE_MARGIN) {
+        //       MEMORY_DATA.push(newLine);
+        //       newLine = []
+        //     }
+        //   }
+        socket.previousLine = action.payload;
         io.emit('message', { type: FROM_SERVER, text: action });
     });
 });
